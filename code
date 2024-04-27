@@ -1,0 +1,76 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import warnings
+warnings.filterwarnings('ignore')
+df=pd.read_csv('/kaggle/input/road-accident-severity-classification/RTA Dataset.csv')
+df.info()
+plt.figure(figsize=(12,8))
+sns.countplot(x='Defect_of_vehicle',hue='Accident_severity',data=df)
+plt.title('Countplot of Defect of Vehicle and Accident_severity')
+plt.show()
+df.drop('Defect_of_vehicle',axis=1,inplace=True) 
+plt.figure(figsize=(12,8))
+sns.countplot(x='Service_year_of_vehicle',hue='Accident_severity',data=df)
+plt.title('Countplot of Service Year of Vehicle and Accident_severity')
+plt.show()
+print((df['Service_year_of_vehicle'].value_counts()/12316)*100)
+print("Nan values: ",(df['Service_year_of_vehicle'].isnull().sum()/12316)*100)
+df['Service_year_of_vehicle']=df['Service_year_of_vehicle'].fillna(df['Service_year_of_vehicle'].mode()[0])
+plt.figure(figsize=(12,8))
+sns.countplot(x='Work_of_casuality',hue='Accident_severity',data=df)
+plt.title("Countplot of Work of Casuality and Accident Severity")
+plt.show()
+df['Work_of_casuality'].fillna('Unknown',inplace=True)
+plt.figure(figsize=(12,8))
+sns.countplot(x='Work_of_casuality',hue='Accident_severity',data=df)
+plt.title("Countplot of Work of Casuality and Accident Severity")
+plt.show()
+plt.figure(figsize=(12,8))
+sns.countplot(x='Fitness_of_casuality',hue='Accident_severity',data=df)
+plt.title("Countplot of Fitness of Casuality and Accident Severity")
+plt.show()
+plt.figure(figsize=(8, 6))
+sns.countplot(x='Sex_of_driver', hue='Accident_severity', data=df)
+plt.title('Count Plot of Sex_of_driver and Accident_severity')
+plt.show()
+df.drop('Fitness_of_casuality',axis=1,inplace=True)
+df.dropna(inplace=True)
+df.describe()
+plt.figure(figsize=(8, 6))
+sns.countplot(x='Sex_of_driver', hue='Accident_severity', data=df)
+plt.title('Count Plot of Sex_of_driver and Accident_severity')
+plt.show()
+pd.crosstab(df['Day_of_week'], df['Accident_severity'])
+plt.figure(figsize=(12,8))
+sns.countplot(x='Age_band_of_driver',hue='Accident_severity',data=df)
+plt.title('Countplot of Age of driver and Accident_severity')
+plt.show()
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+
+
+
+
+def calculate_accuracy(dataframe, columns):
+    """
+    Calculate the accuracy value based on the proportion of non-null values in selected columns of a DataFrame.
+    
+    Args:
+    - dataframe: The DataFrame containing the selected columns.
+    - columns: List of column names for which accuracy will be calculated.
+    
+    Returns:
+    The accuracy value as a percentage.
+    """
+    selected_data = dataframe[columns]
+    total_non_null = selected_data.notnull().sum().sum()
+    total_elements = selected_data.size
+    accuracy = (total_non_null / total_elements) * 100
+    return accuracy
+
+# Example usage:
+accuracy_value = calculate_accuracy(df, selected_columns)
+print("Accuracy Value:", accuracy_value, "%")
